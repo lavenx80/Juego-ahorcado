@@ -54,7 +54,9 @@ Fuente del sistema (Roboto en Android). Ningún texto mide menos de **14 sp**.
 - `icono.svg` / `icono.png`: horca y figura en blanco, con la cuerda en rojo, sobre un degradado de `#2E74B5` a `#1F3864`.
 - `splash.svg` / `splash.png`: el mismo dibujo con el nombre «AHORCADO» sobre `#1F3864`.
 
-## Mockups
+## Wireframes, mockups y prototipo
 
-La carpeta `mockups/` tiene capturas de cada pantalla de la app (393 × 852) en tema claro y oscuro.
-Puedes importarlas en Figma como base de los mockups de alta fidelidad y del prototipo navegable.
+- `wireframes/`: pantallas en baja fidelidad (escala de grises).
+- `mockups/`: pantallas finales de 393 × 852 en tema claro y oscuro.
+- `figma-plugin/`: crea en Figma las páginas de wireframes, mockups y guía de estilos, con el prototipo conectado.
+  Los pasos están en [README.md](README.md).

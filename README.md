@@ -38,6 +38,11 @@ eas build -p android --profile preview
 
 Al terminar, EAS entrega un enlace para descargar el `.apk` e instalarlo en el celular.
 
+## Diseño en Figma
+
+En [docs/diseno](docs/diseno/README.md) están los wireframes, los mockups y la guía de estilos. También hay un plugin que
+crea el archivo de Figma completo, con el prototipo navegable ya conectado.
+
 ## Reglas del juego
 
 1. El jugador escribe su nombre (no puede quedar vacío) y elige una categoría y un nivel.
@@ -78,7 +83,7 @@ ahorcado-app/
 │   ├── storage/almacenamiento.js → Funciones con AsyncStorage
 │   ├── theme/colores.js        → Paleta clara y oscura
 │   └── utils/confirmar.js      → Diálogo de confirmación
-└── docs/diseno/                → Guía de estilos, ícono, splash y mockups
+└── docs/diseno/                → Wireframes, mockups, guía de estilos, ícono, splash y plugin de Figma
 ```
 
 ## Requerimientos funcionales
