@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <g transform="translate(512 400) scale(0.62) translate(-495 -515)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M280 800 H600 M360 800 V230 H660 M360 330 L460 230" stroke="#F2F2F2" stroke-width="44"/>
+    <path d="M640 230 V320" stroke="#D64545" stroke-width="28"/>
+    <g stroke="#F2F2F2" stroke-width="34">
+      <circle cx="640" cy="385" r="65"/>
+      <path d="M640 450 V610 M640 490 L570 560 M640 490 L710 560 M640 610 L580 710 M640 610 L700 710"/>
+    </g>
+  </g>
+  <text x="512" y="730" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="88" font-weight="bold" fill="#F2F2F2" letter-spacing="6">AHORCADO</text>
+  <g fill="#2E9E5B"><rect x="392" y="770" width="60" height="12" rx="6"/><rect x="482" y="770" width="60" height="12" rx="6"/><rect x="572" y="770" width="60" height="12" rx="6"/></g>
+</svg>
