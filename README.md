@@ -3,7 +3,8 @@
 Juego del ahorcado para Android hecho con **React Native y Expo**. Es el parcial de Programación Móvil de Uniciencia.
 
 Las palabras son de 4 categorías: Capitales de Colombia, Animales de Colombia, Frutas y Comidas típicas.
-También hay una opción Aleatoria. Hay 3 niveles de dificultad, pistas, cronómetro y estadísticas guardadas en el celular.
+También hay una opción Aleatoria. Cada partida tiene 3 vidas y varias palabras seguidas.
+Hay 3 niveles de dificultad, pistas, cronómetro y estadísticas guardadas en el celular.
 
 ## Tecnologías
 
@@ -45,7 +46,10 @@ Al terminar, EAS entrega un enlace para descargar el `.apk` e instalarlo en el c
 4. Si la letra está, se revela en todas sus posiciones, suma puntos y el celular hace una vibración corta.
 5. Si no está, se dibuja una parte del ahorcado (cabeza, cuerpo, brazos y piernas) y el celular vibra con el patrón de error.
 6. Las tildes no cuentan: la «O» revela la «Ó». La «Ñ» es una letra distinta.
-7. Se gana al descubrir la palabra antes de 6 errores. Se pierde con 6 errores o, en Difícil, si se acaban los 90 segundos.
+7. La palabra se adivina si se descubre antes de 6 errores. Con 6 errores o, en Difícil, al acabarse los 90 segundos, no se adivina.
+8. Cada partida tiene **3 vidas (♥)**. Cada palabra no adivinada quita una vida y el juego sigue con otra palabra sin reiniciarse.
+   Si se adivina, se pasa a la siguiente palabra con los puntos acumulados.
+9. La partida termina al perder las 3 vidas. El puntaje total entra al top 10.
 
 | Nivel | Palabras | Pistas | Tiempo | Multiplicador |
 | --- | --- | --- | --- | --- |
@@ -53,7 +57,7 @@ Al terminar, EAS entrega un enlace para descargar el `.apk` e instalarlo en el c
 | Medio | Medianas | 2 (−20 pts) | Sin límite | ×2 |
 | Difícil | Largas o compuestas | 1 (−30 pts) | 90 s | ×3 |
 
-**Puntuación:** cada letra revelada da +10. Al ganar hay un bono de 50 más 10 por cada vida restante.
+**Puntuación:** cada letra revelada da +10. Al adivinar una palabra hay un bono de 50 más 10 por cada error no usado.
 Los puntos de letras y el bono se multiplican según el nivel. En Difícil, cada segundo sobrante suma 1 punto.
 
 ## Estructura
@@ -89,7 +93,7 @@ ahorcado-app/
 | RF-06 Validar letra ignorando tildes | `normalizar` en `data/palabras.js` y `aplicarLetra` en `useJuego.js` |
 | RF-07 Letras usadas deshabilitadas y coloreadas | `Teclado.js` |
 | RF-08 Una parte del dibujo por error | `Ahorcado.js` |
-| RF-09 Victoria, derrota y modal | `useJuego.js` + `ModalResultado.js` |
+| RF-09 Victoria, derrota y modal (3 vidas por partida) | `useJuego.js` + `ModalResultado.js` |
 | RF-10 Puntaje en tiempo real | `Marcador.js` |
 | RF-11 Pistas según el nivel | `pedirPista` en `useJuego.js` |
 | RF-12 Cronómetro de 90 s en Difícil | `useJuego.js` + `Marcador.js` |

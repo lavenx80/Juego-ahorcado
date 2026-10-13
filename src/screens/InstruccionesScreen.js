@@ -9,15 +9,18 @@ const REGLAS = [
   'Toca una letra del teclado. Cada letra se usa una sola vez: se pinta de verde si está y de rojo si no.',
   'Si aciertas, la letra se revela en todas sus posiciones. Si fallas, se dibuja una parte del ahorcado.',
   'Las tildes no cuentan: la «O» también revela la «Ó». La «Ñ» sí es una letra distinta.',
-  'Ganas si descubres la palabra antes de 6 errores. Pierdes con 6 errores o si se acaba el tiempo (nivel Difícil).',
+  'Adivinas la palabra si la descubres antes de 6 errores. Con 6 errores, o si se acaba el tiempo en Difícil, no la adivinas.',
+  'Tienes 3 vidas (♥) por partida. Cada palabra que no adivinas te quita una vida y sigues con otra palabra.',
+  'Si adivinas, pasas a la siguiente palabra sin perder vidas y tus puntos se acumulan. La partida termina al perder las 3 vidas.',
 ];
 
 const PUNTUACION = [
   '+10 puntos por cada letra revelada.',
-  'Al ganar: bono de 50 puntos + 10 por cada vida que te quede.',
+  'Al adivinar una palabra: bono de 50 puntos + 10 por cada error que no usaste.',
   'Los puntos de letras y bono se multiplican según el nivel.',
   'En Difícil, cada segundo sobrante suma 1 punto.',
   'Cada pista revela una letra al azar, pero descuenta puntos.',
+  'El puntaje total de la partida entra al top 10 de Estadísticas.',
 ];
 
 function Seccion({ titulo, items, colores }) {

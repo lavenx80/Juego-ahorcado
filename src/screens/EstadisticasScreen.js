@@ -2,12 +2,15 @@ import { FlatList, StyleSheet, Text, View } from 'react-native';
 import Pantalla from '../components/Pantalla';
 import { useApp } from '../context/AppContext';
 
+// Los puntajes guardados antes del sistema de vidas eran de una sola palabra.
+const palabras = (n = 1) => `${n} ${n === 1 ? 'palabra' : 'palabras'}`;
+
 export default function EstadisticasScreen() {
   const { estadisticas: e, colores } = useApp();
   const porcentaje = e.jugadas ? Math.round((e.ganadas / e.jugadas) * 100) : 0;
   const tarjetas = [
-    { icono: '🎮', valor: e.jugadas, titulo: 'Partidas jugadas' },
-    { icono: '🏆', valor: e.ganadas, titulo: 'Partidas ganadas' },
+    { icono: '🎮', valor: e.jugadas, titulo: 'Palabras jugadas' },
+    { icono: '🏆', valor: e.ganadas, titulo: 'Palabras adivinadas' },
     { icono: '📈', valor: `${porcentaje}%`, titulo: 'Victorias' },
     { icono: '🔥', valor: e.mejorRacha, titulo: 'Mejor racha' },
   ];
@@ -45,7 +48,7 @@ export default function EstadisticasScreen() {
             <View style={styles.flex}>
               <Text style={[styles.jugador, { color: colores.texto }]}>{item.jugador}</Text>
               <Text style={[styles.etiqueta, { color: colores.textoSuave }]}>
-                {item.palabra} · {item.categoria} · {item.nivel}
+                {palabras(item.acertadas)} · {item.categoria} · {item.nivel}
               </Text>
             </View>
             <Text style={[styles.puntos, { color: colores.acierto }]}>{item.puntos}</Text>

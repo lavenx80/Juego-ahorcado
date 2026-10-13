@@ -8,7 +8,7 @@ import ModalResultado from '../components/ModalResultado';
 import PalabraOculta from '../components/PalabraOculta';
 import Pantalla from '../components/Pantalla';
 import Teclado from '../components/Teclado';
-import useJuego, { MAX_ERRORES } from '../hooks/useJuego';
+import useJuego, { VIDAS } from '../hooks/useJuego';
 import confirmar from '../utils/confirmar';
 
 export default function JuegoScreen({ navigation, route }) {
@@ -27,9 +27,9 @@ export default function JuegoScreen({ navigation, route }) {
     return () => clearTimeout(id);
   }, [juego.terminado]);
 
-  // RF-15: confirmar antes de salir con «atrás» en medio de una partida.
+  // RF-15: confirmar antes de salir con «atrás» en medio de una palabra.
   usePreventRemove(!juego.terminado, ({ data }) =>
-    confirmar('¿Abandonar la partida?', 'Perderás el progreso de esta palabra.', 'Salir', () =>
+    confirmar('¿Abandonar la partida?', 'Perderás esta palabra, pero tu puntaje acumulado quedará guardado.', 'Salir', () =>
       navigation.dispatch(data.action),
     ),
   );
@@ -39,8 +39,9 @@ export default function JuegoScreen({ navigation, route }) {
       <Marcador
         categoria={juego.categoria}
         nivel={juego.nivel}
-        vidas={MAX_ERRORES - juego.errores}
-        maxVidas={MAX_ERRORES}
+        ronda={juego.ronda}
+        vidas={juego.vidas}
+        maxVidas={VIDAS}
         puntos={juego.puntos}
         tiempo={juego.tiempo}
       />
@@ -61,11 +62,10 @@ export default function JuegoScreen({ navigation, route }) {
 
       <ModalResultado
         visible={verResultado}
-        gano={juego.estado === 'ganado'}
-        porTiempo={juego.porTiempo}
-        palabra={juego.palabra}
-        puntos={juego.puntos}
-        onJugarDeNuevo={juego.reiniciar}
+        juego={juego}
+        maxVidas={VIDAS}
+        onSiguiente={juego.siguientePalabra}
+        onJugarDeNuevo={juego.jugarDeNuevo}
         onMenu={() => navigation.popToTop()}
       />
     </Pantalla>

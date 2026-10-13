@@ -1,7 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import {
   CONFIG_INICIAL, ESTADISTICAS_INICIALES, cargarConfig, cargarEstadisticas,
-  guardarConfig, guardarEstadisticas, sumarPartida,
+  guardarConfig, guardarEstadisticas, sumarPalabra, sumarPuntaje,
 } from '../storage/almacenamiento';
 import { temas } from '../theme/colores';
 
@@ -31,13 +31,16 @@ export function AppProvider({ children }) {
     });
   }, []);
 
-  const registrarPartida = useCallback((partida) => {
+  // Aplica un cambio a las estadísticas y lo guarda.
+  const cambiarEstadisticas = useCallback((cambio) => {
     setEstadisticas((actual) => {
-      const nuevas = sumarPartida(actual, partida);
+      const nuevas = cambio(actual);
       guardarEstadisticas(nuevas);
       return nuevas;
     });
   }, []);
+  const registrarPalabra = useCallback((gano) => cambiarEstadisticas((e) => sumarPalabra(e, gano)), [cambiarEstadisticas]);
+  const registrarPuntaje = useCallback((p) => cambiarEstadisticas((e) => sumarPuntaje(e, p)), [cambiarEstadisticas]);
 
   const borrarEstadisticas = useCallback(() => {
     setEstadisticas(ESTADISTICAS_INICIALES);
@@ -45,8 +48,11 @@ export function AppProvider({ children }) {
   }, []);
 
   const valor = useMemo(
-    () => ({ listo, config, estadisticas, colores: temas[config.tema], actualizarConfig, registrarPartida, borrarEstadisticas }),
-    [listo, config, estadisticas, actualizarConfig, registrarPartida, borrarEstadisticas],
+    () => ({
+      listo, config, estadisticas, colores: temas[config.tema],
+      actualizarConfig, registrarPalabra, registrarPuntaje, borrarEstadisticas,
+    }),
+    [listo, config, estadisticas, actualizarConfig, registrarPalabra, registrarPuntaje, borrarEstadisticas],
   );
 
   return <AppContext.Provider value={valor}>{children}</AppContext.Provider>;

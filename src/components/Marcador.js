@@ -3,21 +3,29 @@ import { useApp } from '../context/AppContext';
 
 const formatoTiempo = (s) => `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
 
-// Categoría, vidas, puntaje y cronómetro de la partida.
-export default function Marcador({ categoria, nivel, vidas, maxVidas, puntos, tiempo }) {
+// Corazones de la partida: rojos los que quedan y grises los perdidos.
+export function Corazones({ vidas, total, tamano = 22 }) {
+  const { colores } = useApp();
+  return (
+    <Text style={{ fontSize: tamano, letterSpacing: 2 }} accessibilityLabel={`${vidas} de ${total} vidas`}>
+      <Text style={{ color: colores.fallo }}>{'♥'.repeat(vidas)}</Text>
+      <Text style={{ color: colores.deshabilitado }}>{'♥'.repeat(total - vidas)}</Text>
+    </Text>
+  );
+}
+
+// Categoría, número de palabra, vidas, puntaje y cronómetro de la partida.
+export default function Marcador({ categoria, nivel, ronda, vidas, maxVidas, puntos, tiempo }) {
   const { colores } = useApp();
   const texto = [styles.dato, { color: colores.texto }];
 
   return (
     <View style={[styles.marcador, { backgroundColor: colores.superficie, borderColor: colores.borde }]}>
       <Text style={[styles.categoria, { color: colores.textoSuave }]}>
-        {categoria.icono} {categoria.nombre} · {nivel.nombre}
+        {categoria.icono} {categoria.nombre} · {nivel.nombre} · Palabra {ronda}
       </Text>
       <View style={styles.fila}>
-        <Text style={texto} accessibilityLabel={`${vidas} vidas`}>
-          <Text style={{ color: colores.fallo }}>{'♥'.repeat(vidas)}</Text>
-          <Text style={{ color: colores.deshabilitado }}>{'♥'.repeat(maxVidas - vidas)}</Text>
-        </Text>
+        <Corazones vidas={vidas} total={maxVidas} />
         <Text style={texto}>⭐ {puntos}</Text>
         {tiempo !== null && (
           <Text style={[texto, tiempo <= 15 && { color: colores.fallo }]}>⏱ {formatoTiempo(tiempo)}</Text>
