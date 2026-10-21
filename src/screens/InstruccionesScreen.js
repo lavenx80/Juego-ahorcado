@@ -10,8 +10,10 @@ const REGLAS = [
   'Si aciertas, la letra se revela en todas sus posiciones. Si fallas, se dibuja una parte del ahorcado.',
   'Las tildes no cuentan: la «O» también revela la «Ó». La «Ñ» sí es una letra distinta.',
   'Adivinas la palabra si la descubres antes de 6 errores. Con 6 errores, o si se acaba el tiempo en Difícil, no la adivinas.',
-  'Tienes 3 vidas (♥) por partida. Cada palabra que no adivinas te quita una vida y sigues con otra palabra.',
-  'Si adivinas, pasas a la siguiente palabra sin perder vidas y tus puntos se acumulan. La partida termina al perder las 3 vidas.',
+  'Tienes 3 vidas (♥) por partida. Cada palabra que no adivinas te quita una vida y el juego sigue solo con otra palabra.',
+  'Si adivinas, pasas a la siguiente palabra sin perder vidas y tus puntos se acumulan.',
+  'Las palabras no se repiten hasta que salgan todas las de la categoría y el nivel.',
+  'La partida termina al perder las 3 vidas. Ahí aparece el tablero con tu puntaje y todas las palabras que jugaste.',
 ];
 
 const PUNTUACION = [

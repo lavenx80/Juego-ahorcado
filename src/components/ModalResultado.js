@@ -1,50 +1,41 @@
-import { Modal, StyleSheet, Text, View } from 'react-native';
+import { useState } from 'react';
+import { Modal, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useApp } from '../context/AppContext';
 import Boton from './Boton';
-import { Corazones } from './Marcador';
 
 const palabras = (n) => `${n} ${n === 1 ? 'palabra adivinada' : 'palabras adivinadas'}`;
+const conSigno = (n) => (n > 0 ? `+${n}` : `${n}`);
 
-// Resultado de cada palabra. Con vidas se sigue jugando; sin vidas es el fin de la partida.
-export default function ModalResultado({ visible, juego, maxVidas, onSiguiente, onJugarDeNuevo, onMenu }) {
+// Tablero del final de la partida: puntaje total y cómo le fue a cada palabra.
+export default function ModalResultado({ visible, juego, onJugarDeNuevo, onMenu }) {
   const { colores } = useApp();
-  const { estado, porTiempo, palabra, puntos, puntosRonda, vidas, acertadas, finDelJuego } = juego;
-  const gano = estado === 'ganado';
-  const [emoji, titulo] = gano
-    ? ['🎉', '¡Palabra adivinada!']
-    : finDelJuego
-      ? ['🏁', '¡Fin del juego!']
-      : porTiempo
-        ? ['⏰', '¡Se acabó el tiempo!']
-        : ['💔', '¡Perdiste una vida!'];
+
+  // Se guarda lo que se está mostrando para que, mientras el modal se cierra,
+  // no aparezcan los datos (ni la palabra) de la partida nueva.
+  const [mostrado, setMostrado] = useState(juego);
+  if (visible && mostrado !== juego) setMostrado(juego);
+  const { puntos, acertadas, historial } = mostrado;
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onMenu}>
       <View style={styles.fondo}>
         <View style={[styles.tarjeta, { backgroundColor: colores.superficie }]}>
-          <Text style={styles.emoji}>{emoji}</Text>
-          <Text style={[styles.titulo, { color: gano ? colores.acierto : colores.fallo }]}>{titulo}</Text>
-          <Text style={[styles.etiqueta, { color: colores.textoSuave }]}>La palabra era</Text>
-          <Text style={[styles.palabra, { color: colores.texto }]}>{palabra}</Text>
-
-          {!finDelJuego && (
-            <>
-              <Corazones vidas={vidas} total={maxVidas} tamano={28} />
-              <Text style={[styles.etiqueta, { color: colores.textoSuave }]}>
-                {vidas === 1 ? 'Te queda 1 vida' : `Te quedan ${vidas} vidas`}
-              </Text>
-            </>
-          )}
+          <Text style={styles.emoji}>🏁</Text>
+          <Text style={[styles.titulo, { color: colores.texto }]}>¡Fin del juego!</Text>
           <Text style={[styles.puntos, { color: colores.texto }]}>⭐ {puntos} puntos</Text>
-          <Text style={[styles.detalle, { color: colores.textoSuave }]}>
-            {finDelJuego ? palabras(acertadas) : `${puntosRonda > 0 ? '+' : ''}${puntosRonda} con esta palabra`}
-          </Text>
+          <Text style={[styles.detalle, { color: colores.textoSuave }]}>{palabras(acertadas)}</Text>
 
-          {finDelJuego ? (
-            <Boton titulo="Jugar de nuevo" icono="🔄" onPress={onJugarDeNuevo} estilo={styles.boton} />
-          ) : (
-            <Boton titulo="Siguiente palabra" icono="▶" onPress={onSiguiente} estilo={styles.boton} />
-          )}
+          <ScrollView style={[styles.tablero, { borderColor: colores.borde }]} contentContainerStyle={styles.filas}>
+            {historial.map((p, i) => (
+              <View key={i} style={styles.fila}>
+                <Text style={[styles.marca, { color: p.gano ? colores.acierto : colores.fallo }]}>{p.gano ? '✓' : '✗'}</Text>
+                <Text style={[styles.palabra, { color: colores.texto }]}>{p.palabra}</Text>
+                <Text style={[styles.puntosFila, { color: colores.textoSuave }]}>{conSigno(p.puntos)}</Text>
+              </View>
+            ))}
+          </ScrollView>
+
+          <Boton titulo="Jugar de nuevo" icono="🔄" onPress={onJugarDeNuevo} estilo={styles.boton} />
           <Boton titulo="Menú" icono="🏠" variante="secundario" onPress={onMenu} estilo={styles.boton} />
         </View>
       </View>
@@ -57,9 +48,13 @@ const styles = StyleSheet.create({
   tarjeta: { borderRadius: 20, padding: 24, alignItems: 'center', gap: 6 },
   emoji: { fontSize: 52 },
   titulo: { fontSize: 28, fontWeight: '800', textAlign: 'center' },
-  etiqueta: { fontSize: 14, marginTop: 4 },
-  palabra: { fontSize: 24, fontWeight: '800', letterSpacing: 2, textAlign: 'center' },
-  puntos: { fontSize: 20, fontWeight: '700', marginTop: 8 },
-  detalle: { fontSize: 14, marginBottom: 8 },
+  puntos: { fontSize: 20, fontWeight: '700', marginTop: 4 },
+  detalle: { fontSize: 14, marginBottom: 4 },
+  tablero: { alignSelf: 'stretch', maxHeight: 220, borderWidth: 1, borderRadius: 12, marginBottom: 6 },
+  filas: { paddingVertical: 8, paddingHorizontal: 12, gap: 6 },
+  fila: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  marca: { fontSize: 18, fontWeight: '800', width: 18, textAlign: 'center' },
+  palabra: { flex: 1, fontSize: 16, fontWeight: '700' },
+  puntosFila: { fontSize: 15, fontWeight: '600' },
   boton: { alignSelf: 'stretch', marginTop: 6 },
 });

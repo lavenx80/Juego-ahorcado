@@ -16,9 +16,15 @@ export const CATEGORIAS = [
     nombre: 'Animales de Colombia',
     icono: '🐆',
     palabras: {
-      facil: ['OSO', 'BOA', 'PUMA', 'LORO', 'MONO', 'DANTA', 'TUCÁN', 'GARZA', 'BÚHO'],
-      medio: ['CÓNDOR', 'JAGUAR', 'CAIMÁN', 'CHIGÜIRO', 'TORTUGA', 'PEREZOSO', 'GUACAMAYA', 'ARMADILLO', 'MANATÍ', 'OCELOTE', 'IGUANA'],
-      dificil: ['OSO DE ANTEOJOS', 'DELFÍN ROSADO', 'MONO AULLADOR', 'RANA DORADA', 'OSO HORMIGUERO', 'ÁGUILA ARPÍA', 'TIBURÓN MARTILLO'],
+      facil: ['OSO', 'BOA', 'PUMA', 'LORO', 'SAPO', 'BÚHO', 'DANTA', 'TUCÁN', 'GARZA', 'COATÍ', 'ÑEQUE', 'BAGRE', 'VENADO'],
+      medio: [
+        'CÓNDOR', 'JAGUAR', 'CAIMÁN', 'CHIGÜIRO', 'TORTUGA', 'PEREZOSO', 'GUACAMAYA', 'ARMADILLO',
+        'MANATÍ', 'OCELOTE', 'IGUANA', 'COLIBRÍ', 'TIGRILLO', 'BABILLA', 'NUTRIA',
+      ],
+      dificil: [
+        'OSO DE ANTEOJOS', 'DELFÍN ROSADO', 'MONO AULLADOR', 'RANA DORADA', 'ÁGUILA ARPÍA', 'TIBURÓN MARTILLO',
+        'GALLITO DE ROCA', 'BALLENA JOROBADA', 'HORMIGA CULONA', 'MURCIÉLAGO', 'TITÍ CABECIBLANCO',
+      ],
     },
   },
   {
@@ -26,9 +32,15 @@ export const CATEGORIAS = [
     nombre: 'Frutas',
     icono: '🍍',
     palabras: {
-      facil: ['UVA', 'PERA', 'PIÑA', 'COCO', 'MORA', 'LULO', 'KIWI', 'MANGO', 'FRESA'],
-      medio: ['BANANO', 'GUAYABA', 'PAPAYA', 'MARACUYÁ', 'NARANJA', 'MANZANA', 'MANDARINA', 'PITAHAYA', 'CURUBA', 'UCHUVA', 'BOROJÓ', 'GULUPA'],
-      dificil: ['TOMATE DE ÁRBOL', 'CHONTADURO', 'GRANADILLA', 'GUANÁBANA', 'CARAMBOLO', 'MANGOSTINO', 'MAMONCILLO'],
+      facil: ['UVA', 'PERA', 'PIÑA', 'COCO', 'MORA', 'LULO', 'KIWI', 'MANGO', 'FRESA', 'MAMEY', 'GUAMA', 'ARAZÁ', 'LIMÓN'],
+      medio: [
+        'BANANO', 'GUAYABA', 'PAPAYA', 'MARACUYÁ', 'NARANJA', 'MANZANA', 'PITAHAYA', 'CURUBA', 'UCHUVA',
+        'BOROJÓ', 'GULUPA', 'AGUACATE', 'ZAPOTE', 'CAIMITO', 'CIRUELA', 'FEIJOA', 'SANDÍA',
+      ],
+      dificil: [
+        'TOMATE DE ÁRBOL', 'CHONTADURO', 'GRANADILLA', 'GUANÁBANA', 'CARAMBOLO', 'MANGOSTINO', 'MAMONCILLO',
+        'TAMARINDO', 'MELOCOTÓN', 'ALBARICOQUE',
+      ],
     },
   },
   {
@@ -36,9 +48,15 @@ export const CATEGORIAS = [
     nombre: 'Comidas típicas',
     icono: '🍲',
     palabras: {
-      facil: ['AREPA', 'TAMAL', 'MUTE', 'OBLEA', 'CHICHA', 'PATACÓN'],
-      medio: ['AJIACO', 'SANCOCHO', 'LECHONA', 'EMPANADA', 'BUÑUELO', 'PANDEBONO', 'CHANGUA', 'MAZAMORRA', 'ALMOJÁBANA'],
-      dificil: ['BANDEJA PAISA', 'ARROZ CON COCO', 'POSTA NEGRA', 'MOTE DE QUESO', 'SOBREBARRIGA', 'CAZUELA DE MARISCOS'],
+      facil: ['AREPA', 'TAMAL', 'MUTE', 'OBLEA', 'CHICHA', 'PATACÓN', 'BOLLO', 'TINTO', 'AVENA', 'PANELA', 'LULADA', 'CHORIZO'],
+      medio: [
+        'AJIACO', 'SANCOCHO', 'LECHONA', 'EMPANADA', 'BUÑUELO', 'PANDEBONO', 'CHANGUA', 'MAZAMORRA',
+        'ALMOJÁBANA', 'CUCHUCO', 'MONDONGO', 'CALENTADO', 'NATILLA', 'SALPICÓN', 'CUAJADA',
+      ],
+      dificil: [
+        'BANDEJA PAISA', 'ARROZ CON COCO', 'POSTA NEGRA', 'MOTE DE QUESO', 'SOBREBARRIGA', 'CAZUELA DE MARISCOS',
+        'PESCADO FRITO', 'LENGUA EN SALSA', 'CHUNCHULLO', 'CHICHARRÓN', 'ENVUELTO DE MAZORCA',
+      ],
     },
   },
 ];
@@ -59,9 +77,25 @@ export const normalizar = (letra) => (letra === 'Ñ' ? letra : letra.normalize('
 // Letras distintas (ya normalizadas) que hay que descubrir en la palabra.
 export const letrasDe = (palabra) => new Set([...palabra.replace(/ /g, '')].map(normalizar));
 
-// Devuelve { palabra, categoria } evitando repetir la palabra anterior.
-export function elegirPalabra(categoriaId, nivelId, anterior) {
-  const categoria = categoriaId === ALEATORIA.id ? azar(CATEGORIAS) : CATEGORIAS.find((c) => c.id === categoriaId);
-  const opciones = categoria.palabras[nivelId].filter((p) => p !== anterior);
-  return { palabra: azar(opciones), categoria };
+// Palabras que ya salieron mientras la app está abierta. No se repiten hasta que salgan todas las de la lista.
+const yaSalieron = new Set();
+
+// Primeras 3 letras sin tildes: OSO / OSO DE ANTEOJOS o SAN ANDRÉS / SANTA MARTA empiezan igual.
+const inicio = (palabra) => [...palabra.slice(0, 3)].map(normalizar).join('');
+
+// Devuelve { palabra, categoria } sin repetir palabras y evitando una que empiece igual que la anterior.
+export function elegirPalabra(categoriaId, nivelId, anterior = '') {
+  const categorias = categoriaId === ALEATORIA.id ? CATEGORIAS : CATEGORIAS.filter((c) => c.id === categoriaId);
+  const todas = categorias.flatMap((categoria) => categoria.palabras[nivelId].map((palabra) => ({ palabra, categoria })));
+
+  let nuevas = todas.filter((o) => !yaSalieron.has(o.palabra));
+  if (nuevas.length === 0) {
+    // Ya salieron todas: la lista vuelve a empezar, sin repetir la anterior.
+    todas.forEach((o) => yaSalieron.delete(o.palabra));
+    nuevas = todas.filter((o) => o.palabra !== anterior);
+  }
+  const distintas = nuevas.filter((o) => inicio(o.palabra) !== inicio(anterior));
+  const elegida = azar(distintas.length ? distintas : nuevas);
+  yaSalieron.add(elegida.palabra);
+  return elegida;
 }

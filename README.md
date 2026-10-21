@@ -52,9 +52,12 @@ crea el archivo de Figma completo, con el prototipo navegable ya conectado.
 5. Si no está, se dibuja una parte del ahorcado (cabeza, cuerpo, brazos y piernas) y el celular vibra con el patrón de error.
 6. Las tildes no cuentan: la «O» revela la «Ó». La «Ñ» es una letra distinta.
 7. La palabra se adivina si se descubre antes de 6 errores. Con 6 errores o, en Difícil, al acabarse los 90 segundos, no se adivina.
-8. Cada partida tiene **3 vidas (♥)**. Cada palabra no adivinada quita una vida y el juego sigue con otra palabra sin reiniciarse.
+8. Cada partida tiene **3 vidas (♥)**. Cada palabra no adivinada quita una vida. Al terminar una palabra se ve completa
+   un momento con un aviso corto y el juego sigue solo con otra palabra, sin reiniciarse.
    Si se adivina, se pasa a la siguiente palabra con los puntos acumulados.
-9. La partida termina al perder las 3 vidas. El puntaje total entra al top 10.
+9. Las palabras no se repiten hasta que salgan todas las de la categoría y el nivel, y nunca salen seguidas dos que empiecen igual.
+10. La partida termina al perder las 3 vidas. Solo entonces aparece el tablero con el puntaje y cada palabra jugada.
+    El puntaje total entra al top 10.
 
 | Nivel | Palabras | Pistas | Tiempo | Multiplicador |
 | --- | --- | --- | --- | --- |
@@ -92,13 +95,13 @@ ahorcado-app/
 | --- | --- |
 | RF-01 Nombre obligatorio | `InicioScreen.js` |
 | RF-02 Categoría y nivel | `CategoriaScreen.js` |
-| RF-03 Palabra aleatoria por categoría y nivel | `elegirPalabra` en `data/palabras.js` |
+| RF-03 Palabra aleatoria por categoría y nivel, sin repetir | `elegirPalabra` en `data/palabras.js` |
 | RF-04 Guiones y espacios visibles | `PalabraOculta.js` |
 | RF-05 Teclado A–Z con Ñ | `Teclado.js` |
 | RF-06 Validar letra ignorando tildes | `normalizar` en `data/palabras.js` y `aplicarLetra` en `useJuego.js` |
 | RF-07 Letras usadas deshabilitadas y coloreadas | `Teclado.js` |
 | RF-08 Una parte del dibujo por error | `Ahorcado.js` |
-| RF-09 Victoria, derrota y modal (3 vidas por partida) | `useJuego.js` + `ModalResultado.js` |
+| RF-09 Victoria, derrota y tablero final (3 vidas por partida) | `useJuego.js` + `ModalResultado.js` |
 | RF-10 Puntaje en tiempo real | `Marcador.js` |
 | RF-11 Pistas según el nivel | `pedirPista` en `useJuego.js` |
 | RF-12 Cronómetro de 90 s en Difícil | `useJuego.js` + `Marcador.js` |

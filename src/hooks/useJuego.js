@@ -8,10 +8,11 @@ export const MAX_ERRORES = 6; // errores por palabra (partes del dibujo)
 const PUNTOS_LETRA = 10;
 const BONO_VICTORIA = 50;
 const PUNTOS_ERROR_SOBRANTE = 10;
+const PAUSA_ENTRE_PALABRAS = 2000; // ms para ver la palabra completa antes de pasar a la siguiente
 
-const PARTIDA_NUEVA = { vidas: VIDAS, puntos: 0, ronda: 0, acertadas: 0 };
+const PARTIDA_NUEVA = { vidas: VIDAS, puntos: 0, ronda: 0, acertadas: 0, historial: [] };
 
-// Nueva palabra; conserva las vidas, los puntos y las palabras acertadas de la partida.
+// Nueva palabra; conserva las vidas, los puntos, las acertadas y el historial de la partida.
 function nuevaRonda({ categoriaId, nivelId, anterior }, partida = PARTIDA_NUEVA) {
   const nivel = NIVELES.find((n) => n.id === nivelId);
   const { palabra, categoria } = elegirPalabra(categoriaId, nivelId, anterior);
@@ -35,9 +36,13 @@ function sumarPuntos(s, cantidad) {
   return { puntos, puntosRonda: s.puntosRonda + puntos - s.puntos };
 }
 
-// Cierra la palabra: si se adivinó suma una acertada, si no, resta una vida.
-const terminarRonda = (s, gano, porTiempo = false) =>
-  gano ? { ...s, estado: 'ganado', acertadas: s.acertadas + 1 } : { ...s, estado: 'perdido', vidas: s.vidas - 1, porTiempo };
+// Cierra la palabra: si se adivinó suma una acertada, si no, resta una vida. Queda anotada en el historial.
+function terminarRonda(s, gano, porTiempo = false) {
+  const historial = [...s.historial, { palabra: s.palabra, gano, puntos: s.puntosRonda }];
+  return gano
+    ? { ...s, historial, estado: 'ganado', acertadas: s.acertadas + 1 }
+    : { ...s, historial, estado: 'perdido', vidas: s.vidas - 1, porTiempo };
+}
 
 // Aplica una letra (tocada o revelada por pista) y revisa si se ganó o perdió la palabra.
 function aplicarLetra(s, letra, esPista) {
@@ -93,6 +98,10 @@ export default function useJuego(categoriaId, nivelId) {
   };
   useEffect(() => () => guardarPuntaje(), []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const { vidas, puntos, ronda, acertadas, historial } = juego;
+  const siguientePalabra = () =>
+    dispatch({ type: 'NUEVA', ronda: nuevaRonda({ categoriaId, nivelId, anterior: palabra }, { vidas, puntos, ronda, acertadas, historial }) });
+
   // Cronómetro (solo nivel difícil), se reinicia con cada palabra.
   useEffect(() => {
     if (!conTiempo || estado !== 'jugando') return undefined;
@@ -100,13 +109,18 @@ export default function useJuego(categoriaId, nivelId) {
     return () => clearInterval(id);
   }, [conTiempo, estado, palabra]);
 
-  // Fin de cada palabra: vibración/sonido y estadísticas.
+  // Fin de cada palabra: vibración/sonido y estadísticas. Si quedan vidas, tras una pausa sigue sola con otra palabra.
   useEffect(() => {
-    if (estado === 'jugando') return;
+    if (estado === 'jugando') return undefined;
     const gano = estado === 'ganado';
     feedback(gano ? 'victoria' : 'derrota');
     registrarPalabra(gano);
-    if (juego.vidas === 0) guardarPuntaje();
+    if (vidas === 0) {
+      guardarPuntaje();
+      return undefined;
+    }
+    const id = setTimeout(siguientePalabra, PAUSA_ENTRE_PALABRAS);
+    return () => clearTimeout(id);
   }, [estado]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const tocarLetra = (letra) => {
@@ -121,10 +135,6 @@ export default function useJuego(categoriaId, nivelId) {
     dispatch({ type: 'PISTA', letra: azar(faltantes) });
   };
 
-  const { vidas, puntos, ronda, acertadas } = juego;
-  const siguientePalabra = () =>
-    dispatch({ type: 'NUEVA', ronda: nuevaRonda({ categoriaId, nivelId, anterior: palabra }, { vidas, puntos, ronda, acertadas }) });
-
   const jugarDeNuevo = () => {
     guardado.current = false;
     dispatch({ type: 'NUEVA', ronda: nuevaRonda({ categoriaId, nivelId, anterior: palabra }) });
@@ -136,7 +146,6 @@ export default function useJuego(categoriaId, nivelId) {
     finDelJuego: vidas === 0,
     tocarLetra,
     pedirPista,
-    siguientePalabra,
     jugarDeNuevo,
   };
 }
